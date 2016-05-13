@@ -4,7 +4,9 @@
     "type": "library",
     "keywords": [
         "uri",
-        "routing"
+        "routing",
+        "request",
+        "router"
     ],
     "license": "MIT",
     "authors": [

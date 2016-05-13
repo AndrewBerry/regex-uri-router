@@ -21,7 +21,6 @@
         public function test_Roll_Through_Routes() {
             $router = new AndrewBerry\Regex_URI_Router();
             
-            ob_start();
             
             $router->Add_Route("/^\//", function($args) {
                 global $output;
@@ -41,12 +40,17 @@
                 return true;
             });
             
+            ob_start();
             $router->Route("/home/");
-            
             $output = ob_get_contents();
             ob_end_clean();
-
             $this->assertEquals("prehome", $output);
+            
+            ob_start();
+            $router->Route("/intentional-post/");
+            $output = ob_get_contents();
+            ob_end_clean();
+            $this->assertEquals("prepost", $output);
         }
         
         public function test_Routing() {

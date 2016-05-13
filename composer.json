@@ -16,5 +16,10 @@
             "homepage": "http://brry.io",
             "role": "Developer"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": {
+            "AndrewBerry\\": "src/"
+        }
+    }
 }

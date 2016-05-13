@@ -1,6 +1,6 @@
 {
     "name": "andrewberry/regex-uri-router",
-    "description": "A simple and flexible URI router.",
+    "description": "A simple and flexible URI router. Check out the example!",
     "type": "library",
     "keywords": [
         "uri",

@@ -1,4 +1,5 @@
 # AndrewBerry/regex-uri-router
+[![Build Status](https://travis-ci.org/AndrewBerry/regex-uri-router.svg?branch=master)](https://travis-ci.org/AndrewBerry/regex-uri-router)
 
 This package is a simple and flexible router that maps request URIs to user defined functions.
 

@@ -11,15 +11,7 @@ $router->Add_Route("/^\/hello\/(\w+)\/$/", function($args) {
     return true;
 });
 
-$router->Add_Route("/^\/$/", function() {
-    echo "index";
-    return true;
-});
-
-$router->Add_Route("/^.*$/", function() {
-    echo "404";
-    return true;
-});
-
 $router->Route($_SERVER["REQUEST_URI"]);
+// A request to /hello/andrew/ will output
+// Hello, andrew
 ````

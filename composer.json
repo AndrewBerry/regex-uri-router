@@ -1,0 +1,21 @@
+{
+    "name": "AndrewBerry/Regex_URI_Router",
+    "description": "A simple and flexible URI router.",
+    "type": "library",
+    "keywords": [
+        "uri",
+        "routing"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrew Berry",
+            "email": "andrew.berry@outlook.com",
+            "homepage": "http://brry.io",
+            "role": "Developer"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "5.3.*"
+    }
+}

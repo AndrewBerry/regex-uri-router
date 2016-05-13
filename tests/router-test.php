@@ -55,7 +55,6 @@
         public function test_Routing() {
             $router = new AndrewBerry\Regex_URI_Router();
             
-            ob_start();
             
             $router->Add_Route("/^\/add\/(\d+)\/(\d+)\/$/", function($args) {
                 echo $args[0] + $args[1];
@@ -70,13 +69,22 @@
                 return true;
             });
             
+            ob_start();
             $router->Route("/add/3/4/");
-            $router->Route("/");
-            $router->Route("/intentional-404/");
-            
             $output = ob_get_contents();
             ob_end_clean();
-
-            $this->assertEquals("7home404", $output);
+            $this->assertEquals("7", $output);
+            
+            ob_start();
+            $router->Route("/");
+            $output = ob_get_contents();
+            ob_end_clean();
+            $this->assertEquals("home", $output);
+            
+            ob_start();
+            $router->Route("/intentional-404/");
+            $output = ob_get_contents();
+            ob_end_clean();
+            $this->assertEquals("404", $output);
         }
     }

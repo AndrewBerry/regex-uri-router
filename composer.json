@@ -1,5 +1,5 @@
 {
-    "name": "AndrewBerry/Regex_URI_Router",
+    "name": "andrewberry/regex-uri-router",
     "description": "A simple and flexible URI router.",
     "type": "library",
     "keywords": [

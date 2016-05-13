@@ -1,5 +1,5 @@
 <?php
-    include_once("../src/regex-uri-router.php");
+    include_once("../src/Regex_URI_Router.php");
 
     class Router_Test extends PHPUnit_Framework_TestCase {
         

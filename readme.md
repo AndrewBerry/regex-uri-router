@@ -48,4 +48,34 @@ Order|Pattern|Description|Return Value
 #3|`/^\/admin\/edit\/$/`|This is an example of a restricted admin page, the logic behind checking the user's authentication status is kept neatly in route #2.|`true` - no further routes are required.
 #4|`/^\/admin\/$/`|Our admin dashboard. Once again, authentication logic has already been executed in our #2 route - if this pattern is being check, it means our user has passed the earlier route.|`true` - no further routes are required.
 
-Please note: The order in which you add routes is the order in which they are checked and potentially executed.
+> Please note: The order in which you add routes is the order in which they are checked and potentially executed.
+
+An example implementation of the table above:
+```php
+include_once("vendor/autoload.php");
+
+$router = new AndrewBerry\Regex_URI_Router();
+
+$router->Add_Route("/^\/login\/$/", "Render_Login_Page"); // Render_Login_Page returns true;
+$router->Add_Route("/^\/admin\//", "Authenticate_Admin"); // Authenticate_Admin redirects to /login/ if not authenticated and returns true or returns false if the user is authenticated (which allows execution of further /admin/* routes).
+$router->Add_Route("/^\/admin\/edit\/$/", "Render_Admin_Edit_Page"); // This route is only checked IF the user is authenticated and false is returned from the "Authenticate_Admin" route. This route returns true.
+$router->Add_Route("/^\/admin\/$/", "Render_Admin_Page"); // Again, this route is only checked IF the user is authenticated and false is returned from the "Authenticate_Admin" route. This route returns true.
+
+$router->Route($_SERVER["REQUEST_URI"]);
+```
+
+## An Example .htaccess File
+```apache
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+    
+    # Add trailing slash
+    RewriteCond %{REQUEST_URI} !(/$|\.) 
+    RewriteRule (.*) %{REQUEST_URI}/ [R=301,L]
+    
+    # Rewrite any uri to index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ /index.php?route=$1 [NC,L,QSA]
+</IfModule>
+```

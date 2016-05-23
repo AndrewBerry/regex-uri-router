@@ -3,86 +3,82 @@
 
     class Router_Test extends PHPUnit_Framework_TestCase {
         
-        public function test_Adding_Routes() {
-            $router = new AndrewBerry\Regex_URI_Router();
-            
-            function example_callback() {
-            }
-            
-            $initial_count = count($router->Get_Routes());
-            
-            $this->assertEquals($router->Add_Route("/^\/$/", "example_callback"), true);
-            $this->assertEquals($router->Add_Route("/^\/$/", "not_a_function"), false);
-            
-            $this->assertEquals(count($router->Get_Routes()), $initial_count + 1);
-        }
-        
         public function test_Roll_Through_Routes() {
-            $router = new AndrewBerry\Regex_URI_Router();
             
-            
-            $router->Add_Route("/^\//", function($args) {
-                global $output;
+            function Pre_False($args) {
                 echo "pre";
                 return false;
-            });
+            }
             
-            $router->Add_Route("/^\/home\/$/", function($args) {
-                global $output;
+            function Home_True($args) {
                 echo "home";
                 return true;
-            });
+            }
             
-            $router->Add_Route("/^\/.*\/?$/", function($args) {
-                global $output;
+            function Post_True($args) {
                 echo "post";
                 return true;
-            });
+            }
             
             ob_start();
-            $router->Route("/home/");
+            $router = new AndrewBerry\Regex_URI_Router("/home/");
+            $router->Test("/^\//", "Pre_False");
+            $router->Test("/^\/home\/$/", "Home_True");
+            $router->Test("/^\/.*\/?$/", "Post_True");
             $output = ob_get_contents();
             ob_end_clean();
             $this->assertEquals("prehome", $output);
-            
+
             ob_start();
-            $router->Route("/intentional-post/");
+            $router = new AndrewBerry\Regex_URI_Router("/intentional-post/");
+            $router->Test("/^\//", "Pre_False");
+            $router->Test("/^\/home\/$/", "Home_True");
+            $router->Test("/^\/.*\/?$/", "Post_True");
             $output = ob_get_contents();
             ob_end_clean();
             $this->assertEquals("prepost", $output);
         }
         
         public function test_Routing() {
-            $router = new AndrewBerry\Regex_URI_Router();
             
-            
-            $router->Add_Route("/^\/add\/(\d+)\/(\d+)\/$/", function($args) {
+            function Route_Add($args) {
                 echo $args[0] + $args[1];
                 return true;
-            });
-            $router->Add_Route("/^\/$/", function($args) {
+            }
+            
+            function Route_Home($args) {
                 echo "home";
                 return true;
-            });
-            $router->Add_Route("/^.*$/", function($args) {
+            }
+            
+            function Route_404($args) {
                 echo "404";
                 return true;
-            });
+            }
             
             ob_start();
-            $router->Route("/add/3/4/");
+            $router = new AndrewBerry\Regex_URI_Router("/add/3/4/");
+            $router->Test("/^\/add\/(\d+)\/(\d+)\/$/", "Route_Add");
+            $router->Test("/^\/$/", "Route_Home");
+            $router->Test("/^.*$/", "Route_404");
             $output = ob_get_contents();
             ob_end_clean();
             $this->assertEquals("7", $output);
             
             ob_start();
-            $router->Route("/");
+            $router = new AndrewBerry\Regex_URI_Router("/");
+            $router->Test("/^\/add\/(\d+)\/(\d+)\/$/", "Route_Add");
+            $router->Test("/^\/$/", "Route_Home");
+            $router->Test("/^.*$/", "Route_404");
             $output = ob_get_contents();
             ob_end_clean();
             $this->assertEquals("home", $output);
             
             ob_start();
-            $router->Route("/intentional-404/");
+            $router = new AndrewBerry\Regex_URI_Router("/intentional-404/");
+            $router->Test("/^\/add\/(\d+)\/(\d+)\/$/", "Route_Add");
+            $router->Test("/^\/$/", "Route_Home");
+            $router->Test("/^.*$/", "Route_404");
             $output = ob_get_contents();
             ob_end_clean();
             $this->assertEquals("404", $output);

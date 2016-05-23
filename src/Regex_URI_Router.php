@@ -23,65 +23,53 @@
      */
     class Regex_URI_Router {
         /**
-         * Active routes to be iterated across with Regex_URI_Router::Route()
+         * Destination path to test each route against.
+         * 
+         * Initially set in __construct() and generally set to $_SERVER["REQUEST_URI"]
          *
          * @private
-         * @var array
+         * @var string
          */
-        private $routes;
+        private $destination;
         
         /**
-         * Getter for the private var $routes
+         * This flag determines whether or not tests are skipped.
          * 
-         * @return array Private $routes variable
+         * @private
+         * @var boolean
          */
-        public function Get_Routes() {
-            return $this->routes;
-        }
+        private $skip_future_tests;
         
         /**
          * @private
          * @param string $request_uri The current request URI.
          */
-        public function __construct() {
-            $this->routes = [];
+        public function __construct($destination) {
+            $this->destination = $destination;
+            $this->skip_future_tests = false;
         }
         
         /**
-         * Adds a new route to be checked.
+         * Executes $callback_func if $pattern matches $destination AND $skip_future_tests is not true.
          *
          * @param   string      $pattern        The regex pattern assigned to our $callback_func
-         * @param   callable    $callback_func  Callback that is called if $pattern matches $request_uri_without_get (return true to stop iterating through routes)
+         * @param   callable    $callback_func  Callback that is called if $pattern matches $destination (return true to skip future tests)
          */
-        public function Add_Route($pattern, $callback_func) {
-            if (is_callable($callback_func)) {
-                $this->routes[] = [
-                    "pattern" => $pattern,
-                    "callback_func" => $callback_func
-                ];
-                
-                return true;
+        public function Test($pattern, $callback_func) {
+            if ($this->skip_future_tests === true) {
+                return false;
             }
             
-            return false;
-        }
-        
-        /**
-         * Iterates through our $routes and executes any callbacks that have a pattern that matches the request uri.
-         */
-        public function Route($request_uri) {
-            $request_uri_parts = explode("?", $request_uri);
-            $request_uri_without_get = $request_uri_parts[0];
-            
-            foreach ($this->routes as $route) {
-                $matches = [];
-                if (preg_match($route["pattern"], $request_uri_without_get, $matches)) {
-                    array_shift($matches);
-                    
-                    if (call_user_func($route["callback_func"], $matches) === true) {
-                        break;
-                    }
-                }
+            if (!is_callable($callback_func)) {
+                return false;
             }
+            
+            $matches = [];
+            if (preg_match($pattern, $this->destination, $matches)) {
+                array_shift($matches);
+                $this->skip_future_tests = call_user_func($callback_func, $matches);
+            }
+            
+            return true;
         }
     }

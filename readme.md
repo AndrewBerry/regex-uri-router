@@ -1,19 +1,20 @@
 # andrewberry/regex-uri-router
 [![Build Status](https://travis-ci.org/AndrewBerry/regex-uri-router.svg?branch=master)](https://travis-ci.org/AndrewBerry/regex-uri-router)
 
-This package is a simple and flexible router that maps request URIs to user defined functions. andrewberry/regex-uri-router is built with flexability and simplicity in mind - Take a look at a quick eample:
+This package is a simple and flexible router that maps request URIs to user defined functions. andrewberry/regex-uri-router is built with flexability and simplicity in mind - Take a look at a quick example:
 
 ```php
-$router = new AndrewBerry\Regex_URI_Router();
+$router = new AndrewBerry\Regex_URI_Router($_SERVER["REQUEST_URI"]);
 
-$router->Add_Route("/^\/hello\/(\w+)\/$/", function($args) {
-    echo "Hello, {$args[0]}";
-    return true;
-});
+function Hello_Route($args) {
+    echo "Hello, {$args[0]}!";
+    return true; // Skip all future tests.
+}
 
-$router->Route($_SERVER["REQUEST_URI"]);
-// A request to /hello/andrew/ will output
-// Hello, andrew
+$router->Test("/^\/hello\/(\w+)\/\?.*$/", "Hello_Route");
+
+// A request to /hello/world/?ignoring=query_string! will output
+// Hello, world
 ```
 
 With some help from .htaccess, we can direct any request to a single entry point for our application and handle our request routing all from one place. If you would like to see more usage examples, see below.
@@ -54,14 +55,13 @@ An example implementation of the table above:
 ```php
 include_once("vendor/autoload.php");
 
-$router = new AndrewBerry\Regex_URI_Router();
+$router = new AndrewBerry\Regex_URI_Router($_SERVER["REQUEST_URI"]);
 
-$router->Add_Route("/^\/login\/$/", "Render_Login_Page"); // Render_Login_Page returns true;
-$router->Add_Route("/^\/admin\//", "Authenticate_Admin"); // Authenticate_Admin redirects to /login/ if not authenticated and returns true or returns false if the user is authenticated (which allows execution of further /admin/* routes).
-$router->Add_Route("/^\/admin\/edit\/$/", "Render_Admin_Edit_Page"); // This route is only checked IF the user is authenticated and false is returned from the "Authenticate_Admin" route. This route returns true.
-$router->Add_Route("/^\/admin\/$/", "Render_Admin_Page"); // Again, this route is only checked IF the user is authenticated and false is returned from the "Authenticate_Admin" route. This route returns true.
+$router->Test("/^\/login\/\?.*$/", "Render_Login_Page"); // Render_Login_Page returns true;
+$router->Test("/^\/admin\//", "Authenticate_Admin"); // Authenticate_Admin redirects to /login/ if not authenticated and returns true or returns false if the user is authenticated (which allows execution of further /admin/* routes).
+$router->Test("/^\/admin\/edit\/\?.*$/", "Render_Admin_Edit_Page"); // This route is only checked IF the user is authenticated and false is returned from the "Authenticate_Admin" route. This route returns true.
+$router->Test("/^\/admin\/\?.*$/", "Render_Admin_Page"); // Again, this route is only checked IF the user is authenticated and false is returned from the "Authenticate_Admin" route. This route returns true.
 
-$router->Route($_SERVER["REQUEST_URI"]);
 ```
 
 ## An Example .htaccess File

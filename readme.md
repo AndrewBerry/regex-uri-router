@@ -44,10 +44,10 @@ With this in mind, it is easy to create a route that will act as a filter, pre-r
 
 Order|Pattern|Description|Return Value
 ---|---|---|---
-#1|`/^\/login\/$/`|Displays the login form.|`true` - no further routes are required.
+#1|`/^\/login\/\?.*$/`|Displays the login form.|`true` - no further routes are required.
 #2|`/^\/admin\//`|This is our filter route, it will check if the user is able to view any route beginning with `/admin/`. If the user is not authenticated, the user is redirected to our `/login/` page and a value of `true` is returned.|`false` if user is authenticated which then allows further execution of the `/admin/X` routes below, or `true` and the user is redirected, starting a new request from the top.
-#3|`/^\/admin\/edit\/$/`|This is an example of a restricted admin page, the logic behind checking the user's authentication status is kept neatly in route #2.|`true` - no further routes are required.
-#4|`/^\/admin\/$/`|Our admin dashboard. Once again, authentication logic has already been executed in our #2 route - if this pattern is being check, it means our user has passed the earlier route.|`true` - no further routes are required.
+#3|`/^\/admin\/edit\/\?.*$/`|This is an example of a restricted admin page, the logic behind checking the user's authentication status is kept neatly in route #2.|`true` - no further routes are required.
+#4|`/^\/admin\/\?.*$/`|Our admin dashboard. Once again, authentication logic has already been executed in our #2 route - if this pattern is being check, it means our user has passed the earlier route.|`true` - no further routes are required.
 
 > Please note: The order in which you add routes is the order in which they are checked and potentially executed.
 
